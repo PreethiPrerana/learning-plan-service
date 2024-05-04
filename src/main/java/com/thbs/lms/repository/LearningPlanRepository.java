@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The {@code LearningPlanRepository} interface provides CRUD operations for the
@@ -12,19 +13,11 @@ import java.util.List;
  */
 @Repository
 public interface LearningPlanRepository extends JpaRepository<LearningPlan, Long> {
-    /**
-     * Retrieves a list of learning plans by their type.
-     *
-     * @param type The type of the learning plans to retrieve.
-     * @return A list of learning plans with the specified type.
-     */
+
+    LearningPlan findByLearningPlanNameAndType(String learningPlanName, String type);
+
+    LearningPlan findByBatchIdsContaining(Set<Long> batchIds);
+
     List<LearningPlan> findByType(String type);
 
-    /**
-     * Retrieves a list of learning plans by their batch ID.
-     *
-     * @param batchId The ID of the batch associated with the learning plans.
-     * @return A list of learning plans with the specified batch ID.
-     */
-    List<LearningPlan> findByBatchId(Long batchId);
 }

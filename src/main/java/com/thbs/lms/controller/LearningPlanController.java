@@ -1,16 +1,14 @@
 package com.thbs.lms.controller;
 
-import com.thbs.lms.dto.LearningPlanDTO;
 import com.thbs.lms.model.LearningPlan;
-import com.thbs.lms.service.BulkUploadService;
 import com.thbs.lms.service.LearningPlanService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The {@code LearningPlanController} class handles HTTP requests related to
@@ -20,20 +18,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/learning-plan")
-@CrossOrigin("172.18.4.113:5173, 172.18.4.195:5173 ")
 public class LearningPlanController {
 
-    /**
-     * The service responsible for handling business logic related to learning
-     * plans.
-     */
     private final LearningPlanService learningPlanService;
 
-    /**
-     * Constructs a new {@code LearningPlanController} with the specified services.
-     *
-     * @param learningPlanService the learning plan service
-     */
     @Autowired
     public LearningPlanController(LearningPlanService learningPlanService) {
         this.learningPlanService = learningPlanService;
@@ -46,9 +34,9 @@ public class LearningPlanController {
      * @return a response entity containing the added learning plan
      */
     @PostMapping
-    public ResponseEntity<LearningPlan> saveLearningPlan(@RequestBody LearningPlan learningPlan) {
-        LearningPlan addedLearningPlan = learningPlanService.saveLearningPlan(learningPlan);
-        return ResponseEntity.ok().body(addedLearningPlan);
+    public ResponseEntity<Object> saveLearningPlan(@RequestBody LearningPlan learningPlan) {
+        LearningPlan savedLearningPlan = learningPlanService.saveLearningPlan(learningPlan);
+        return ResponseEntity.ok().body(savedLearningPlan);
     }
 
     /**
@@ -62,6 +50,12 @@ public class LearningPlanController {
         return ResponseEntity.ok().body(learningPlans);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<LearningPlan> getLearningPlanById(@PathVariable Long id) {
+        LearningPlan learningPlan = learningPlanService.getLearningPlanById(id);
+        return ResponseEntity.ok().body(learningPlan);
+    }
+
     /**
      * Retrieves all learning plans by type.
      *
@@ -71,8 +65,8 @@ public class LearningPlanController {
      */
     @GetMapping("/type/{type}")
     public ResponseEntity<List<LearningPlan>> getLearningPlansByType(@PathVariable String type) {
-        List<LearningPlan> learningPlan = learningPlanService.getLearningPlansByType(type);
-        return ResponseEntity.ok().body(learningPlan);
+        List<LearningPlan> learningPlans = learningPlanService.getLearningPlansByType(type);
+        return ResponseEntity.ok().body(learningPlans);
     }
 
     /**
@@ -83,9 +77,15 @@ public class LearningPlanController {
      *         specified batch
      */
     @GetMapping("/batch/{batchId}")
-    public ResponseEntity<List<LearningPlan>> getLearningPlansByBatchID(@PathVariable Long batchId) {
-        List<LearningPlan> learningPlan = learningPlanService.getLearningPlanByBatchId(batchId);
+    public ResponseEntity<LearningPlan> getLearningPlanByBatchId(@PathVariable Set<Long> batchId) {
+        LearningPlan learningPlan = learningPlanService.getLearningPlanByBatchId(batchId);
         return ResponseEntity.ok().body(learningPlan);
+    }
+
+    @PutMapping("/{id}/update-name")
+    public ResponseEntity<LearningPlan> updateLearningPlanName(@PathVariable Long id, @RequestBody String newName) {
+        LearningPlan updatedLearningPlan = learningPlanService.updateLearningPlanName(id, newName);
+        return ResponseEntity.ok().body(updatedLearningPlan);
     }
 
     /**
@@ -94,33 +94,38 @@ public class LearningPlanController {
      * @param learningPlanId the ID of the learning plan to delete
      * @return a response entity indicating the success of the deletion operation
      */
-    @DeleteMapping("/{learningPlanId}")
-    public ResponseEntity<String> deleteLearningPlan(@PathVariable Long learningPlanId) {
-        learningPlanService.deleteLearningPlan(learningPlanId);
-        return ResponseEntity.ok().body("LearningPlan deleted successfully.");
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteLearningPlan(@PathVariable Long id) {
+        learningPlanService.deleteLearningPlan(id);
+        return ResponseEntity.ok().body("LearningPlan deleted successfully");
     }
-
-    // /**
-    //  * Retrieves learning plan DTOs.
-    //  *
-    //  * @return a response entity containing a list of learning plan DTOs
-    //  */
-    // @GetMapping("/dto")
-    // public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOs() {
-    //     List<LearningPlanDTO> dto = learningPlanService.getAllLearningPlanPathDTOs();
-    //     return ResponseEntity.ok().body(dto);
-    // }
-
-    // /**
-    //  * Retrieves learning plan DTOs by batch ID.
-    //  *
-    //  * @param batchId the batch ID
-    //  * @return a response entity containing a list of learning plan DTOs for the
-    //  *         specified batch ID
-    //  */
-    // @GetMapping("/dto/{batchId}")
-    // public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOsByBatchId(@PathVariable Long batchId) {
-    //     List<LearningPlanDTO> dtos = learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId);
-    //     return ResponseEntity.ok().body(dtos);
-    // }
 }
+
+// // /**
+// // * Retrieves learning plan DTOs.
+// // *
+// // * @return a response entity containing a list of learning plan DTOs
+// // */
+// // @GetMapping("/dto")
+// // public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOs()
+// {
+// // List<LearningPlanDTO> dto =
+// learningPlanService.getAllLearningPlanPathDTOs();
+// // return ResponseEntity.ok().body(dto);
+// // }
+
+// // /**
+// // * Retrieves learning plan DTOs by batch ID.
+// // *
+// // * @param batchId the batch ID
+// // * @return a response entity containing a list of learning plan DTOs for
+// the
+// // * specified batch ID
+// // */
+// // @GetMapping("/dto/{batchId}")
+// // public ResponseEntity<List<LearningPlanDTO>>
+// // getAllLearningPlanPathDTOsByBatchId(@PathVariable Long batchId) {
+// // List<LearningPlanDTO> dtos =
+// // learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId);
+// // return ResponseEntity.ok().body(dtos);
+// // }
