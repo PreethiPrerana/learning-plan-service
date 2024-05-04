@@ -30,20 +30,13 @@ public class LearningPlanController {
     private final LearningPlanService learningPlanService;
 
     /**
-     * The service responsible for handling bulk upload functionality.
-     */
-    private final BulkUploadService bulkUploadService;
-
-    /**
      * Constructs a new {@code LearningPlanController} with the specified services.
      *
      * @param learningPlanService the learning plan service
-     * @param bulkUploadService   the bulk upload service
      */
     @Autowired
-    public LearningPlanController(LearningPlanService learningPlanService, BulkUploadService bulkUploadService) {
+    public LearningPlanController(LearningPlanService learningPlanService) {
         this.learningPlanService = learningPlanService;
-        this.bulkUploadService = bulkUploadService;
     }
 
     /**
@@ -59,18 +52,6 @@ public class LearningPlanController {
     }
 
     /**
-     * Handles bulk upload functionality.
-     *
-     * @param file the file to upload
-     * @return a response entity indicating the success of the upload operation
-     */
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        bulkUploadService.uploadFile(file);
-        return ResponseEntity.ok().body("File uploaded successfully.");
-    }
-
-    /**
      * Retrieves all learning plans.
      *
      * @return a response entity containing a list of all learning plans
@@ -79,30 +60,6 @@ public class LearningPlanController {
     public ResponseEntity<List<LearningPlan>> getAllLearningPlans() {
         List<LearningPlan> learningPlans = learningPlanService.getAllLearningPlans();
         return ResponseEntity.ok().body(learningPlans);
-    }
-
-    /**
-     * Retrieves learning plan DTOs.
-     *
-     * @return a response entity containing a list of learning plan DTOs
-     */
-    @GetMapping("/dto")
-    public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOs() {
-        List<LearningPlanDTO> dto = learningPlanService.getAllLearningPlanPathDTOs();
-        return ResponseEntity.ok().body(dto);
-    }
-
-    /**
-     * Retrieves learning plan DTOs by batch ID.
-     *
-     * @param batchId the batch ID
-     * @return a response entity containing a list of learning plan DTOs for the
-     *         specified batch ID
-     */
-    @GetMapping("/dto/{batchId}")
-    public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOsByBatchId(@PathVariable Long batchId) {
-        List<LearningPlanDTO> dtos = learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId);
-        return ResponseEntity.ok().body(dtos);
     }
 
     /**
@@ -142,4 +99,28 @@ public class LearningPlanController {
         learningPlanService.deleteLearningPlan(learningPlanId);
         return ResponseEntity.ok().body("LearningPlan deleted successfully.");
     }
+
+    // /**
+    //  * Retrieves learning plan DTOs.
+    //  *
+    //  * @return a response entity containing a list of learning plan DTOs
+    //  */
+    // @GetMapping("/dto")
+    // public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOs() {
+    //     List<LearningPlanDTO> dto = learningPlanService.getAllLearningPlanPathDTOs();
+    //     return ResponseEntity.ok().body(dto);
+    // }
+
+    // /**
+    //  * Retrieves learning plan DTOs by batch ID.
+    //  *
+    //  * @param batchId the batch ID
+    //  * @return a response entity containing a list of learning plan DTOs for the
+    //  *         specified batch ID
+    //  */
+    // @GetMapping("/dto/{batchId}")
+    // public ResponseEntity<List<LearningPlanDTO>> getAllLearningPlanPathDTOsByBatchId(@PathVariable Long batchId) {
+    //     List<LearningPlanDTO> dtos = learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId);
+    //     return ResponseEntity.ok().body(dtos);
+    // }
 }
