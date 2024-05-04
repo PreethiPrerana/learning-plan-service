@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.thbs.lms.dto.CourseDTO;
 import com.thbs.lms.model.Course;
+import com.thbs.lms.service.BulkUploadService;
 import com.thbs.lms.service.CourseService;
 
 /**
@@ -25,14 +27,21 @@ public class CourseController {
     private final CourseService courseService;
 
     /**
+     * The service responsible for handling bulk upload functionality.
+     */
+    private final BulkUploadService bulkUploadService;
+
+    /**
      * Constructs a new {@code CourseController} with the specified
      * {@code CourseService}.
      *
      * @param courseService the course service
      */
     @Autowired
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService, BulkUploadService bulkUploadService) {
         this.courseService = courseService;
+        this.bulkUploadService = bulkUploadService;
+
     }
 
     /**
@@ -45,6 +54,18 @@ public class CourseController {
     public ResponseEntity<Course> addCourse(@RequestBody Course course) {
         Course addedCourse = courseService.saveCourse(course);
         return ResponseEntity.ok().body(addedCourse);
+    }
+
+    /**
+     * Handles bulk upload functionality.
+     *
+     * @param file the file to upload
+     * @return a response entity indicating the success of the upload operation
+     */
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        bulkUploadService.uploadFile(file);
+        return ResponseEntity.ok().body("File uploaded successfully.");
     }
 
     /**
