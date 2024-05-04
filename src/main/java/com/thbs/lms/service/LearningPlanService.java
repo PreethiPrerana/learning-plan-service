@@ -147,6 +147,25 @@ public class LearningPlanService {
         }
     }
 
+    /**
+     * Deletes a learning plan by its ID from the database along with its associated
+     * paths.
+     *
+     * @param id The ID of the learning plan to delete.
+     * @throws LearningPlanNotFoundException If the learning plan with the specified
+     *                                       ID is not found.
+     */
+    public void deleteLearningPlan(Long id) {
+        Optional<LearningPlan> optionalLearningPlan = learningPlanRepository.findById(id);
+        if (optionalLearningPlan.isPresent()) {
+            // Throws exception if learning plan with given ID is not found
+            learningPlanPathService.deleteLearningPlanPathsByLearningPlanId(id);
+            learningPlanRepository.delete(optionalLearningPlan.get());
+        } else {
+            throw new LearningPlanNotFoundException("Learning plan with ID " + id + NOT_FOUND);
+        }
+    }
+
     // /**
     //  * Retrieves all learning plan DTOs (Data Transfer Objects) from the database.
     //  *
@@ -179,25 +198,6 @@ public class LearningPlanService {
 
     //     return dtoByBatch;
     // }
-
-    /**
-     * Deletes a learning plan by its ID from the database along with its associated
-     * paths.
-     *
-     * @param id The ID of the learning plan to delete.
-     * @throws LearningPlanNotFoundException If the learning plan with the specified
-     *                                       ID is not found.
-     */
-    public void deleteLearningPlan(Long id) {
-        Optional<LearningPlan> optionalLearningPlan = learningPlanRepository.findById(id);
-        if (optionalLearningPlan.isPresent()) {
-            // Throws exception if learning plan with given ID is not found
-            learningPlanPathService.deleteLearningPlanPathsByLearningPlanId(id);
-            learningPlanRepository.delete(optionalLearningPlan.get());
-        } else {
-            throw new LearningPlanNotFoundException("Learning plan with ID " + id + NOT_FOUND);
-        }
-    }
 
     // public Long getBatchIdByLearningPlanId(Long learningPlanId) {
     //     LearningPlan learningPlan = learningPlanRepository.findById(learningPlanId)
