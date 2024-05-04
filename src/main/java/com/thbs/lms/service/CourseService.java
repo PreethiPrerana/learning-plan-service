@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class CourseService {
 
-    private static final String NOT_FOUND_MSG = "Course not found for ID: ";
+    private static final String NOT_FOUND_MSG = "Course not found for Id: ";
     private CourseRepository courseRepository;
     private TopicService topicService;
 

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The {@code moduleService} class provides methods for managing
@@ -27,7 +28,7 @@ public class ModuleService {
      * specified repository.
      *
      * @param moduleRepository The repository for managing learning plan
-     *                                   paths.
+     *                         paths.
      */
     @Autowired
     public ModuleService(ModuleRepository moduleRepository) {
@@ -40,14 +41,14 @@ public class ModuleService {
      * @param module The learning plan path to be saved.
      * @return The saved learning plan path.
      * @throws InvalidmoduleDataException If the learning plan path data
-     *                                              is invalid.
+     *                                    is invalid.
      * @throws DuplicatemoduleException   If a learning plan path with the
-     *                                              same details already exists.
+     *                                    same details already exists.
      */
     public Module saveModule(Module module) {
         // Validates data and checks for duplicates before saving
         if (module.getStartDate() == null || module.getEndDate() == null
-                || module.getTrainer() == null 
+                || module.getTrainer() == null || module.getTrainer().isEmpty()
                 || module.getCourse() == null) {
             // Throws exceptions if path data is invalid or duplicate
             throw new InvalidModuleDataException(
@@ -55,7 +56,6 @@ public class ModuleService {
         }
         Long learningPlanId = module.getLearningPlan().getLearningPlanId();
         Course course = module.getCourse();
-   
 
         Optional<Module> existingEntry = moduleRepository
                 .findByLearningPlanLearningPlanIdAndCourse(learningPlanId, course);
@@ -67,19 +67,45 @@ public class ModuleService {
         return moduleRepository.save(module);
     }
 
-    /**
-     * Saves a list of modules to the database with validation.
-     *
-     * @param modules The list of modules to be saved.
-     * @return The list of saved modules.
-     */
-    public List<Module> saveAllModules(List<Module> modules) {
-        List<Module> savedPaths = new ArrayList<>();
-        for (Module module : modules) {
-            savedPaths.add(saveModule(module));
-        }
-        return savedPaths;
+   /**
+ * Saves a list of modules to the database with validation.
+ *
+ * @param modules The list of modules to be saved.
+ * @return The list of saved modules.
+ * @throws InvalidModuleDataException If any module in the list has invalid data.
+ * @throws DuplicateModuleException If any module in the list already exists.
+ */
+public List<Module> saveAllModules(List<Module> modules) {
+    // Validate input modules
+    for (Module module : modules) {
+        validateModuleData(module);
     }
+
+    // Check for duplicate modules
+    List<Module> existingModules = moduleRepository.findAllByLearningPlanInAndCourseIn(
+            modules.stream().map(Module::getLearningPlan).collect(Collectors.toList()),
+            modules.stream().map(Module::getCourse).collect(Collectors.toList())
+    );
+    if (!existingModules.isEmpty()) {
+        throw new DuplicateModuleException("One or more modules already exist.");
+    }
+
+    // Save all modules
+    List<Module> savedModules = moduleRepository.saveAll(modules);
+    
+    return savedModules;
+}
+
+private void validateModuleData(Module module) {
+    if (module.getStartDate() == null || module.getEndDate() == null
+            || module.getTrainer() == null || module.getTrainer().isEmpty()
+            || module.getCourse() == null) {
+        throw new InvalidModuleDataException("Invalid or incomplete data provided for creating Module");
+    }
+}
+
+
+    
 
     /**
      * Retrieves all modules from the database.
@@ -100,8 +126,6 @@ public class ModuleService {
         return moduleRepository.findByLearningPlanLearningPlanId(learningPlanId);
     }
 
-    
-
     /**
      * Retrieves modules by trainer from the database.
      *
@@ -121,13 +145,13 @@ public class ModuleService {
     /**
      * Updates the trainer of a learning plan path by its ID in the database.
      *
-     * @param moduleId     The ID of the learning plan path.
+     * @param moduleId   The ID of the learning plan path.
      * @param newTrainer The new trainer for the learning plan path.
      * @return The updated learning plan path.
-     * @throws InvalidTrainerException           If the trainer is invalid or
-     *                                           incomplete.
+     * @throws InvalidTrainerException If the trainer is invalid or
+     *                                 incomplete.
      * @throws moduleNotFoundException If the learning plan path with the
-     *                                           specified ID is not found.
+     *                                 specified ID is not found.
      */
     public Module updateModuleTrainer(Long moduleId, String newTrainer) {
         // Validates and updates the trainer of the path
@@ -145,14 +169,14 @@ public class ModuleService {
     /**
      * Updates the dates of a learning plan path in the database.
      *
-     * @param moduleId The ID of the learning plan path.
-     * @param startDate          The start date of the learning plan path.
-     * @param endDate            The end date of the learning plan path.
+     * @param moduleId  The ID of the learning plan path.
+     * @param startDate The start date of the learning plan path.
+     * @param endDate   The end date of the learning plan path.
      * @return The updated learning plan path.
      * @throws InvalidmoduleDataException If the date format is invalid or
-     *                                              incomplete.
+     *                                    incomplete.
      * @throws moduleNotFoundException    If the learning plan path with
-     *                                              the specified ID is not found.
+     *                                    the specified ID is not found.
      */
     public Optional<Module> updateModuleDates(Long moduleId, Date startDate,
             Date endDate) {
@@ -207,7 +231,7 @@ public class ModuleService {
      *
      * @param moduleId The ID of the learning plan path to delete.
      * @throws moduleNotFoundException If the learning plan path with the
-     *                                           specified ID is not found.
+     *                                 specified ID is not found.
      */
     public void deleteModule(Long moduleId) {
 

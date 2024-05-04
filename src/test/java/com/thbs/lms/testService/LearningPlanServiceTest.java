@@ -58,6 +58,7 @@ class LearningPlanServiceTest {
         learningPlan.setLearningPlanId(1L);
         learningPlan.setType("Test Type");
         learningPlan.setBatchId(1L);
+        learningPlan.setLearningPlanName("Test Learning Plan"); 
     }
 
     @Test
@@ -127,41 +128,45 @@ class LearningPlanServiceTest {
 
     // @Test
     // void testGetAllLearningPlanPathDTOs() {
-    //     // Sample data
-    //     LearningPlan learningPlan1 = new LearningPlan();
-    //     learningPlan1.setLearningPlanId(1L);
+    // // Sample data
+    // LearningPlan learningPlan1 = new LearningPlan();
+    // learningPlan1.setLearningPlanId(1L);
 
-    //     LearningPlan learningPlan2 = new LearningPlan();
-    //     learningPlan2.setLearningPlanId(2L);
+    // LearningPlan learningPlan2 = new LearningPlan();
+    // learningPlan2.setLearningPlanId(2L);
 
-    //     List<LearningPlan> learningPlans = List.of(learningPlan1, learningPlan2);
+    // List<LearningPlan> learningPlans = List.of(learningPlan1, learningPlan2);
 
-    //     // Mocking repository method
-    //     when(learningPlanPathRepository.findAll()).thenReturn(List.of(new Module(), new Module()));
+    // // Mocking repository method
+    // when(learningPlanPathRepository.findAll()).thenReturn(List.of(new Module(),
+    // new Module()));
 
-    //     // Calling the method to test
-    //     List<LearningPlanDTO> learningPlanDTOs = learningPlanService.getAllLearningPlanPathDTOs();
-    //     assertNotNull(learningPlans);
-    //     assertNotNull(learningPlanDTOs);
+    // // Calling the method to test
+    // List<LearningPlanDTO> learningPlanDTOs =
+    // learningPlanService.getAllLearningPlanPathDTOs();
+    // assertNotNull(learningPlans);
+    // assertNotNull(learningPlanDTOs);
 
     // }
 
     // @Test
     // void testGetAllLearningPlanPathDTOsByBatchId() {
-    //     // Mock data
-    //     Long batchId = 123L;
-    //     List<LearningPlanDTO> allDTO = new ArrayList<>();
-    //     // Add mock data to allDTO
-    //     when(learningPlanService.getAllLearningPlanPathDTOs()).thenReturn(allDTO);
+    // // Mock data
+    // Long batchId = 123L;
+    // List<LearningPlanDTO> allDTO = new ArrayList<>();
+    // // Add mock data to allDTO
+    // when(learningPlanService.getAllLearningPlanPathDTOs()).thenReturn(allDTO);
 
-    //     // Call getAllLearningPlanPathDTOsByBatchId method
-    //     List<LearningPlanDTO> dtoByBatch = learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId);
+    // // Call getAllLearningPlanPathDTOsByBatchId method
+    // List<LearningPlanDTO> dtoByBatch =
+    // learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId);
 
-    //     // Verify the correctness of dtoByBatch
-    //     // Add assertions to verify that only DTOs with the correct batchId are returned
-    //     for (LearningPlanDTO dto : dtoByBatch) {
-    //         assertEquals(batchId, dto.getBatchId());
-    //     }
+    // // Verify the correctness of dtoByBatch
+    // // Add assertions to verify that only DTOs with the correct batchId are
+    // returned
+    // for (LearningPlanDTO dto : dtoByBatch) {
+    // assertEquals(batchId, dto.getBatchId());
+    // }
     // }
 
     @Test

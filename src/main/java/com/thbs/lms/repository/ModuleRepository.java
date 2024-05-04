@@ -1,9 +1,12 @@
 package com.thbs.lms.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.thbs.lms.model.Course;
+import com.thbs.lms.model.LearningPlan;
 import com.thbs.lms.model.Module;
 
 import java.util.List;
@@ -44,4 +47,8 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
      *         learning plan ID, course  if found.
      */
     Optional<Module> findByLearningPlanLearningPlanIdAndCourse(Long learningPlanId, Course course);
+
+    @Query("SELECT m FROM Module m WHERE m.learningPlan IN :learningPlans AND m.course IN :courses")
+    List<Module> findAllByLearningPlanInAndCourseIn(@Param("learningPlans") List<LearningPlan> learningPlans,
+                                                    @Param("courses") List<Course> courses);
 }

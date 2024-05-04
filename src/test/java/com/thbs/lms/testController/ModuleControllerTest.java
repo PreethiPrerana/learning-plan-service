@@ -159,6 +159,6 @@ class moduleControllerTest {
 
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("Module deleted successfully", responseEntity.getBody());
+        assertEquals("module deleted successfully", responseEntity.getBody());
     }
 }

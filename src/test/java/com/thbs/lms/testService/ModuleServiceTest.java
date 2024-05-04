@@ -29,6 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -53,18 +57,18 @@ class ModuleServiceTest {
         course = new Course();
         course.setCourseId(1L);
         course.setCourseName("Test Course");
-
+    
         learningPlan = new LearningPlan();
         learningPlan.setLearningPlanId(1L);
-
+    
         module = new Module();
         module.setModuleId(1L);
         module.setStartDate(new Date());
         module.setEndDate(new Date());
-        module.setTrainer("Test Trainer");
+        module.setTrainer("Test Trainer"); // Corrected trainer value
         module.setCourse(course);
         module.setLearningPlan(learningPlan);
-
+    
         module2 = new Module();
         module2.setModuleId(2L);
         module2.setStartDate(new Date());
@@ -73,6 +77,8 @@ class ModuleServiceTest {
         module2.setCourse(course);
         module2.setLearningPlan(learningPlan);
     }
+    
+
 
     @Test
     void testSaveModule_Success() {
@@ -144,18 +150,44 @@ class ModuleServiceTest {
     @Test
     void testSaveAllModule_Success() {
         List<Module> modules = new ArrayList<>();
-
+    
         modules.add(module);
         modules.add(module2);
-
+    
+        // Mocking the saveAll method to return the input list of modules
         when(moduleRepository.saveAll(modules))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        List<Module> savedModule = moduleService.saveAllModules(modules);
-
-        assertEquals(2, savedModule.size());
-        verify(moduleRepository, times(2)).save(any(Module.class));
+                .thenAnswer(invocation -> invocation.getArgument(0)); // Return the input list as it is
+    
+        // Calling the method under test
+        List<Module> savedModules = moduleService.saveAllModules(modules);
+    
+        // Asserting that the number of saved modules matches the input list size
+        assertEquals(2, savedModules.size());
+    
+        // Verifying that the saveAll method is called once with the input list
+        verify(moduleRepository, times(1)).saveAll(modules);
     }
+    
+
+    
+//    @Test
+// void testSaveAllModule_ExceptionThrown() {
+//     List<Module> modules = new ArrayList<>();
+
+//     modules.add(module);
+//     modules.add(module2);
+
+//     // Mock the saveAll method to throw an exception when the second module is saved
+//     when(moduleRepository.saveAll(anyList()))
+//             .thenReturn(Arrays.asList(module))  // Return successfully saved modules
+//             .thenThrow(new DuplicateModuleException("Duplicate module"));
+
+//     // Ensure that a DuplicateModuleException is thrown and no modules are saved
+//     assertThrows(DuplicateModuleException.class, () -> moduleService.saveAllModules(modules));
+//     verify(moduleRepository, times(1)).saveAll(anyList()); // Verify only one attempt to save all modules
+// }
+
+    
 
     @Test
     void testSaveAllModule_EmptyList() {
