@@ -66,11 +66,11 @@ public class LearningPlanService {
         if (!existingLearningPlan.isEmpty()) {
             // Throws exception if duplicate learning plan or invalid data
             throw new DuplicateLearningPlanException(
-                    "Learning plan for this batch " + learningPlan.getBatchId() + " already exists.");
+                    "Learning plan for this batch already exists.");
         }
         if (learningPlan.getBatchId() == null || learningPlan.getType() == null || learningPlan.getType().isEmpty()
                 || learningPlan.getLearningPlanName() == null) {
-            throw new InvalidLearningPlanException("Batch ID or LearningPlan Type or LearningPlan Name cannot be null");
+            throw new InvalidLearningPlanException("Batch ID, LearningPlan Type or LearningPlan Name cannot be null");
         }
         return learningPlanRepository.save(learningPlan);
     }
@@ -137,7 +137,7 @@ public class LearningPlanService {
         // Validates batch ID and retrieves learning plans by batch ID
         if (batchID == null) {
             // Throws exception if batch ID is invalid or no learning plans found
-            throw new InvalidBatchException("LearningPlan Type cannot be null");
+            throw new InvalidBatchException("Batch ID cannot be null");
         }
         List<LearningPlan> learningPlan = learningPlanRepository.findByBatchId(batchID);
         if (!learningPlan.isEmpty()) {
@@ -147,38 +147,38 @@ public class LearningPlanService {
         }
     }
 
-    /**
-     * Retrieves all learning plan DTOs (Data Transfer Objects) from the database.
-     *
-     * @return The list of all learning plan DTOs.
-     */
-    public List<LearningPlanDTO> getAllLearningPlanPathDTOs() {
-        List<LearningPlanDTO> dtos = new ArrayList<>();
-        List<LearningPlan> learningPlans = learningPlanRepository.findAll();
-        for (LearningPlan learningPlan : learningPlans) {
-            LearningPlanDTO dto = convertToDTO(learningPlan.getLearningPlanId());
-            dtos.add(dto);
-        }
-        return dtos;
-    }
+    // /**
+    //  * Retrieves all learning plan DTOs (Data Transfer Objects) from the database.
+    //  *
+    //  * @return The list of all learning plan DTOs.
+    //  */
+    // public List<LearningPlanDTO> getAllLearningPlanPathDTOs() {
+    //     List<LearningPlanDTO> dtos = new ArrayList<>();
+    //     List<LearningPlan> learningPlans = learningPlanRepository.findAll();
+    //     for (LearningPlan learningPlan : learningPlans) {
+    //         LearningPlanDTO dto = convertToDTO(learningPlan.getLearningPlanId());
+    //         dtos.add(dto);
+    //     }
+    //     return dtos;
+    // }
 
-    /**
-     * Retrieves all learning plan DTOs (Data Transfer Objects) filtered by batch ID
-     * from the database.
-     *
-     * @param batchId The ID of the batch.
-     * @return The list of learning plan DTOs filtered by batch ID.
-     */
-    public List<LearningPlanDTO> getAllLearningPlanPathDTOsByBatchId(Long batchId) {
-        List<LearningPlanDTO> dtoByBatch = new ArrayList<>();
-        List<LearningPlanDTO> allDTO = getAllLearningPlanPathDTOs();
-        for (LearningPlanDTO DTO : allDTO) {
-            if (batchId.equals(DTO.getBatchId()))
-                dtoByBatch.add(DTO);
-        }
+    // /**
+    //  * Retrieves all learning plan DTOs (Data Transfer Objects) filtered by batch ID
+    //  * from the database.
+    //  *
+    //  * @param batchId The ID of the batch.
+    //  * @return The list of learning plan DTOs filtered by batch ID.
+    //  */
+    // public List<LearningPlanDTO> getAllLearningPlanPathDTOsByBatchId(Long batchId) {
+    //     List<LearningPlanDTO> dtoByBatch = new ArrayList<>();
+    //     List<LearningPlanDTO> allDTO = getAllLearningPlanPathDTOs();
+    //     for (LearningPlanDTO DTO : allDTO) {
+    //         if (batchId.equals(DTO.getBatchId()))
+    //             dtoByBatch.add(DTO);
+    //     }
 
-        return dtoByBatch;
-    }
+    //     return dtoByBatch;
+    // }
 
     /**
      * Deletes a learning plan by its ID from the database along with its associated
@@ -199,55 +199,53 @@ public class LearningPlanService {
         }
     }
 
-    public Long getBatchIdByLearningPlanId(Long learningPlanId) {
-        LearningPlan learningPlan = learningPlanRepository.findById(learningPlanId)
-                .orElse(null);
-        if (learningPlan != null) {
-            return learningPlan.getBatchId();
-        } else {
-            // Handle the case where the learning plan with the given ID is not found
-            return null; // Or throw an exception, depending on your requirements
-        }
-    }
+    // public Long getBatchIdByLearningPlanId(Long learningPlanId) {
+    //     LearningPlan learningPlan = learningPlanRepository.findById(learningPlanId)
+    //             .orElse(null);
+    //     if (learningPlan != null) {
+    //         return learningPlan.getBatchId();
+    //     } else {
+    //         // Handle the case where the learning plan with the given ID is not found
+    //         return null; // Or throw an exception, depending on your requirements
+    //     }
+    // }
 
-    
-    /**
-     * Converts a learning plan to a DTO (Data Transfer Object).
-     *
-     * @param learningPlanId The ID of the learning plan.
-     * @return The DTO representing the learning plan.
-     */
-    public LearningPlanDTO convertToDTO(Long learningPlanId) {
-        LearningPlanDTO dto = new LearningPlanDTO();
+    // /**
+    //  * Converts a learning plan to a DTO (Data Transfer Object).
+    //  *
+    //  * @param learningPlanId The ID of the learning plan.
+    //  * @return The DTO representing the learning plan.
+    //  */
+    // public LearningPlanDTO convertToDTO(Long learningPlanId) {
+    //     LearningPlanDTO dto = new LearningPlanDTO();
 
-        LearningPlan learningPlan = getLearningPlanById(learningPlanId);
-        dto.setBatchId(learningPlan.getBatchId());
-        dto.setLearningPlanId(learningPlanId);
+    //     LearningPlan learningPlan = getLearningPlanById(learningPlanId);
+    //     dto.setBatchId(learningPlan.getBatchId());
+    //     dto.setLearningPlanId(learningPlanId);
 
-        List<Module> relatedPaths = learningPlanPathRepository
-                .findByLearningPlanLearningPlanId(learningPlanId);
-        List<PathDTO> paths = new ArrayList<>();
+    //     List<Module> relatedPaths = learningPlanPathRepository
+    //             .findByLearningPlanLearningPlanId(learningPlanId);
+    //     List<PathDTO> paths = new ArrayList<>();
 
-        for (Module path : relatedPaths) {
-            if (path.getType().equalsIgnoreCase("course")) {
-                PathDTO pathDTO = new PathDTO();
-                pathDTO.setLearningPlanPathId(path.getPathId());
-                pathDTO.setType(path.getType());
-                pathDTO.setTrainer(path.getTrainer());
-                pathDTO.setStartDate(path.getStartDate());
-                pathDTO.setEndDate(path.getEndDate());
+    //     for (Module path : relatedPaths) {
+    //         if (path.getType().equalsIgnoreCase("course")) {
+    //             PathDTO pathDTO = new PathDTO();
+    //             pathDTO.setLearningPlanPathId(path.getPathId());
+    //             pathDTO.setType(path.getType());
+    //             pathDTO.setTrainer(path.getTrainer());
+    //             pathDTO.setStartDate(path.getStartDate());
+    //             pathDTO.setEndDate(path.getEndDate());
 
-                Course course = path.getCourse();
-                CourseDTO courseDTO = courseService.convertToDTO(course);
-                pathDTO.setCourse(courseDTO);
+    //             Course course = path.getCourse();
+    //             CourseDTO courseDTO = courseService.convertToDTO(course);
+    //             pathDTO.setCourse(courseDTO);
 
-                paths.add(pathDTO);
-            }
+    //             paths.add(pathDTO);
+    //         }
 
-        }
+    //     }
 
-        dto.setPath(paths);
-        return dto;
-    }
-
+    //     dto.setPath(paths);
+    //     return dto;
+    // }
 }
