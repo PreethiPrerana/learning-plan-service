@@ -15,20 +15,20 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.thbs.lms.exception.CourseNotFoundException;
 import com.thbs.lms.exception.DuplicateCourseException;
 import com.thbs.lms.exception.DuplicateLearningPlanException;
-import com.thbs.lms.exception.DuplicateLearningPlanPathException;
+import com.thbs.lms.exception.DuplicateModuleException;
 import com.thbs.lms.exception.DuplicateTopicException;
 import com.thbs.lms.exception.ErrorResponse;
 import com.thbs.lms.exception.GlobalExceptionHandler;
 import com.thbs.lms.exception.InvalidCourseDataException;
 import com.thbs.lms.exception.InvalidDescriptionException;
 import com.thbs.lms.exception.InvalidLearningPlanException;
-import com.thbs.lms.exception.InvalidLearningPlanPathDataException;
+import com.thbs.lms.exception.InvalidModuleDataException;
 import com.thbs.lms.exception.InvalidLevelException;
 import com.thbs.lms.exception.InvalidSheetFormatException;
 import com.thbs.lms.exception.InvalidTopicDataException;
 import com.thbs.lms.exception.InvalidTrainerException;
 import com.thbs.lms.exception.LearningPlanNotFoundException;
-import com.thbs.lms.exception.LearningPlanPathNotFoundException;
+import com.thbs.lms.exception.ModuleNotFoundException;
 import com.thbs.lms.exception.TopicNotFoundException;
 
 @ExtendWith(SpringExtension.class)
@@ -79,12 +79,12 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleDuplicateLearningPlanPathException() {
-        DuplicateLearningPlanPathException mockException = mock(DuplicateLearningPlanPathException.class);
+    void testHandleDuplicateModuleException() {
+        DuplicateModuleException mockException = mock(DuplicateModuleException.class);
         String errorMessage = "Duplicate learning plan path detected";
         when(mockException.getMessage()).thenReturn(errorMessage);
 
-        ErrorResponse response = globalExceptionHandler.handleDuplicateLearningPlanPathException(mockException);
+        ErrorResponse response = globalExceptionHandler.handleDuplicateModuleException(mockException);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatus());
         assertEquals(errorMessage, response.getMessage());
@@ -187,24 +187,24 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleLearningPlanPathNotFoundException() {
-        LearningPlanPathNotFoundException mockException = mock(LearningPlanPathNotFoundException.class);
+    void testHandleModuleNotFoundException() {
+        ModuleNotFoundException mockException = mock(ModuleNotFoundException.class);
         String errorMessage = "Learning plan path not found";
         when(mockException.getMessage()).thenReturn(errorMessage);
 
-        ErrorResponse response = globalExceptionHandler.handleLearningPlanPathNotFoundException(mockException);
+        ErrorResponse response = globalExceptionHandler.handleModuleNotFoundException(mockException);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
         assertEquals(errorMessage, response.getMessage());
     }
 
     @Test
-    void testHandleInvalidLearningPlanPathDataException() {
-        InvalidLearningPlanPathDataException mockException = mock(InvalidLearningPlanPathDataException.class);
+    void testHandleInvalidModuleDataException() {
+        InvalidModuleDataException mockException = mock(InvalidModuleDataException.class);
         String errorMessage = "Invalid learning plan path data";
         when(mockException.getMessage()).thenReturn(errorMessage);
 
-        ErrorResponse response = globalExceptionHandler.handleInvalidLearningPlanPathDataException(mockException);
+        ErrorResponse response = globalExceptionHandler.handleInvalidModuleDataException(mockException);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
         assertEquals(errorMessage, response.getMessage());

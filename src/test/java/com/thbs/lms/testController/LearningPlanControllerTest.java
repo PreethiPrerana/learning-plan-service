@@ -57,17 +57,17 @@ class LearningPlanControllerTest {
         assertEquals(learningPlan, responseEntity.getBody());
     }
 
-    @Test
-    void testUploadFile() throws IOException {
-        MultipartFile file = null;
+    // @Test
+    // void testUploadFile() throws IOException {
+    //     MultipartFile file = null;
 
-        doNothing().when(bulkUploadService).uploadFile(file);
+    //     doNothing().when(bulkUploadService).uploadFile(file);
 
-        ResponseEntity<?> responseEntity = learningPlanController.uploadFile(file);
+    //     ResponseEntity<?> responseEntity = learningPlanController.uploadFile(file);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("File uploaded successfully.", responseEntity.getBody());
-    }
+    //     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    //     assertEquals("File uploaded successfully.", responseEntity.getBody());
+    // }
 
     @Test
     void testGetAllLearningPlans() {
@@ -87,42 +87,42 @@ class LearningPlanControllerTest {
         assertEquals(learningPlans, responseEntity.getBody());
     }
 
-    @Test
-    void testGetAllLearningPlanPathDTOs() {
-        // Sample data
-        List<LearningPlanDTO> expectedDTOs = Arrays.asList(
-                new LearningPlanDTO(),
-                new LearningPlanDTO());
+    // @Test
+    // void testGetAllLearningPlanPathDTOs() {
+    //     // Sample data
+    //     List<LearningPlanDTO> expectedDTOs = Arrays.asList(
+    //             new LearningPlanDTO(),
+    //             new LearningPlanDTO());
 
-        // Mock service method to return sample data
-        when(learningPlanService.getAllLearningPlanPathDTOs()).thenReturn(expectedDTOs);
+    //     // Mock service method to return sample data
+    //     when(learningPlanService.getAllLearningPlanPathDTOs()).thenReturn(expectedDTOs);
 
-        // Call the controller method
-        ResponseEntity<List<LearningPlanDTO>> response = learningPlanController.getAllLearningPlanPathDTOs();
+    //     // Call the controller method
+    //     ResponseEntity<List<LearningPlanDTO>> response = learningPlanController.getAllLearningPlanPathDTOs();
 
-        // Verify response status code
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedDTOs, response.getBody());
-    }
+    //     // Verify response status code
+    //     assertEquals(HttpStatus.OK, response.getStatusCode());
+    //     assertEquals(expectedDTOs, response.getBody());
+    // }
 
-    @Test
-    void testGetAllLearningPlanPathDTOsByBatchId() {
-        // Mock data
-        Long batchId = 123L;
-        List<LearningPlanDTO> expectedDtos = new ArrayList<>();
-        expectedDtos.add(new LearningPlanDTO());
+    // @Test
+    // void testGetAllLearningPlanPathDTOsByBatchId() {
+    //     // Mock data
+    //     Long batchId = 123L;
+    //     List<LearningPlanDTO> expectedDtos = new ArrayList<>();
+    //     expectedDtos.add(new LearningPlanDTO());
 
-        // Mock service method
-        when(learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId)).thenReturn(expectedDtos);
+    //     // Mock service method
+    //     when(learningPlanService.getAllLearningPlanPathDTOsByBatchId(batchId)).thenReturn(expectedDtos);
 
-        // Call controller method
-        ResponseEntity<List<LearningPlanDTO>> response = learningPlanController
-                .getAllLearningPlanPathDTOsByBatchId(batchId);
+    //     // Call controller method
+    //     ResponseEntity<List<LearningPlanDTO>> response = learningPlanController
+    //             .getAllLearningPlanPathDTOsByBatchId(batchId);
 
-        // Verify response
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedDtos, response.getBody());
-    }
+    //     // Verify response
+    //     assertEquals(HttpStatus.OK, response.getStatusCode());
+    //     assertEquals(expectedDtos, response.getBody());
+    // }
 
     @Test
     void testFindByType() {

@@ -1,19 +1,13 @@
 package com.thbs.lms.service;
 
-import com.thbs.lms.dto.CourseDTO;
-import com.thbs.lms.dto.LearningPlanDTO;
-import com.thbs.lms.dto.PathDTO;
 import com.thbs.lms.exception.*;
-import com.thbs.lms.model.Course;
 import com.thbs.lms.model.LearningPlan;
-import com.thbs.lms.model.Module;
-import com.thbs.lms.repository.LearningPlanPathRepository;
+import com.thbs.lms.repository.ModuleRepository;
 import com.thbs.lms.repository.LearningPlanRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,27 +20,27 @@ public class LearningPlanService {
 
     private static final String NOT_FOUND = " not found.";
     private LearningPlanRepository learningPlanRepository;
-    private LearningPlanPathService learningPlanPathService;
-    private LearningPlanPathRepository learningPlanPathRepository;
+    private ModuleService moduleService;
+    private ModuleRepository moduleRepository;
     private CourseService courseService;
 
     /**
      * Constructs a new instance of {@code LearningPlanService} with the specified
      * dependencies.
      *
-     * @param learningPlanPathService    The service for managing learning plan
+     * @param moduleService    The service for managing learning plan
      *                                   paths.
      * @param courseService              The service for managing courses.
      * @param learningPlanRepository     The repository for managing learning plans.
-     * @param learningPlanPathRepository The repository for managing learning plan
+     * @param moduleRepository The repository for managing learning plan
      *                                   paths.
      */
     @Autowired
-    public LearningPlanService(LearningPlanPathService learningPlanPathService, CourseService courseService,
-            LearningPlanRepository learningPlanRepository, LearningPlanPathRepository learningPlanPathRepository) {
-        this.learningPlanPathService = learningPlanPathService;
+    public LearningPlanService(ModuleService moduleService, CourseService courseService,
+            LearningPlanRepository learningPlanRepository, ModuleRepository moduleRepository) {
+        this.moduleService = moduleService;
         this.learningPlanRepository = learningPlanRepository;
-        this.learningPlanPathRepository = learningPlanPathRepository;
+        this.moduleRepository = moduleRepository;
         this.courseService = courseService;
     }
 
@@ -159,7 +153,7 @@ public class LearningPlanService {
         Optional<LearningPlan> optionalLearningPlan = learningPlanRepository.findById(id);
         if (optionalLearningPlan.isPresent()) {
             // Throws exception if learning plan with given ID is not found
-            learningPlanPathService.deleteLearningPlanPathsByLearningPlanId(id);
+            moduleService.deleteModulesByLearningPlanId(id);
             learningPlanRepository.delete(optionalLearningPlan.get());
         } else {
             throw new LearningPlanNotFoundException("Learning plan with ID " + id + NOT_FOUND);
@@ -223,7 +217,7 @@ public class LearningPlanService {
     //     dto.setBatchId(learningPlan.getBatchId());
     //     dto.setLearningPlanId(learningPlanId);
 
-    //     List<Module> relatedPaths = learningPlanPathRepository
+    //     List<Module> relatedPaths = moduleRepository
     //             .findByLearningPlanLearningPlanId(learningPlanId);
     //     List<PathDTO> paths = new ArrayList<>();
 
