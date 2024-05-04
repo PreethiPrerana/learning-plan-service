@@ -14,7 +14,7 @@ import com.thbs.lms.model.LearningPlan;
 import com.thbs.lms.model.Module;
 
 @SpringBootTest
-class LearningPlanPathTest {
+class ModuleTest {
     @Test
     void testGettersAndSetters() {
         // Initialize a LearningPlanPath object
@@ -29,19 +29,17 @@ class LearningPlanPathTest {
         Date startDate = new Date();
         Date endDate = new Date();
 
-        learningPlanPath.setPathId(pathId);
+        learningPlanPath.setModuleId(pathId);
         learningPlanPath.setLearningPlan(learningPlan);
         learningPlanPath.setCourse(course);
-        learningPlanPath.setType(type);
         learningPlanPath.setTrainer(trainer);
         learningPlanPath.setStartDate(startDate);
         learningPlanPath.setEndDate(endDate);
 
         // Test getters
-        assertEquals(pathId, learningPlanPath.getPathId());
+        assertEquals(pathId, learningPlanPath.getModuleId());
         assertEquals(learningPlan, learningPlanPath.getLearningPlan());
         assertEquals(course, learningPlanPath.getCourse());
-        assertEquals(type, learningPlanPath.getType());
         assertEquals(trainer, learningPlanPath.getTrainer());
         assertEquals(startDate, learningPlanPath.getStartDate());
         assertEquals(endDate, learningPlanPath.getEndDate());
@@ -51,10 +49,9 @@ class LearningPlanPathTest {
     void testNoArgsConstructor() {
         Module learningPlanPath = new Module();
         assertNotNull(learningPlanPath);
-        assertNull(learningPlanPath.getPathId());
+        assertNull(learningPlanPath.getModuleId());
         assertNull(learningPlanPath.getLearningPlan());
         assertNull(learningPlanPath.getCourse());
-        assertNull(learningPlanPath.getType());
         assertNull(learningPlanPath.getTrainer());
         assertNull(learningPlanPath.getStartDate());
         assertNull(learningPlanPath.getEndDate());
@@ -65,18 +62,16 @@ class LearningPlanPathTest {
         Long pathId = 1L;
         LearningPlan learningPlan = new LearningPlan();
         Course course = new Course();
-        String type = "Test Type";
         String trainer = "Test Trainer";
         Date startDate = new Date();
         Date endDate = new Date();
 
-        Module learningPlanPath = new Module(pathId, learningPlan, course, type, trainer, startDate,
+        Module learningPlanPath = new Module(pathId, learningPlan, course, trainer, startDate,
                 endDate);
         assertNotNull(learningPlanPath);
-        assertEquals(pathId, learningPlanPath.getPathId());
+        assertEquals(pathId, learningPlanPath.getModuleId());
         assertEquals(learningPlan, learningPlanPath.getLearningPlan());
         assertEquals(course, learningPlanPath.getCourse());
-        assertEquals(type, learningPlanPath.getType());
         assertEquals(trainer, learningPlanPath.getTrainer());
         assertEquals(startDate, learningPlanPath.getStartDate());
         assertEquals(endDate, learningPlanPath.getEndDate());

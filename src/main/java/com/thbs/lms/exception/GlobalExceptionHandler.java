@@ -39,10 +39,10 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(DuplicateLearningPlanPathException.class)
+    @ExceptionHandler(DuplicateModuleException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public ErrorResponse handleDuplicateLearningPlanPathException(DuplicateLearningPlanPathException ex) {
+    public ErrorResponse handleDuplicateModuleException(DuplicateModuleException ex) {
         return new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
@@ -102,17 +102,17 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(LearningPlanPathNotFoundException.class)
+    @ExceptionHandler(ModuleNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorResponse handleLearningPlanPathNotFoundException(LearningPlanPathNotFoundException ex) {
+    public ErrorResponse handleModuleNotFoundException(ModuleNotFoundException ex) {
         return new ErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(InvalidLearningPlanPathDataException.class)
+    @ExceptionHandler(InvalidModuleDataException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponse handleInvalidLearningPlanPathDataException(InvalidLearningPlanPathDataException ex) {
+    public ErrorResponse handleInvalidModuleDataException(InvalidModuleDataException ex) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

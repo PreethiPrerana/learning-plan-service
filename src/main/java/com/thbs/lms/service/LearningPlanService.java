@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LearningPlanService {
 
+    private static final String NOT_FOUND_MSG = "Learning plan not found.";
     private final LearningPlanRepository learningPlanRepository;
 
     /**
@@ -83,7 +84,7 @@ public class LearningPlanService {
      */
     public LearningPlan getLearningPlanById(Long id) {
         return learningPlanRepository.findById(id)
-                .orElseThrow(() -> new LearningPlanNotFoundException("Learning plan not found."));
+                .orElseThrow(() -> new LearningPlanNotFoundException(NOT_FOUND_MSG));
     }
 
     /**
@@ -105,7 +106,7 @@ public class LearningPlanService {
             return learningPlan;
         } else {
             // Throws exception if type is invalid or no learning plans found
-            throw new LearningPlanNotFoundException("Learning plan not found.");
+            throw new LearningPlanNotFoundException(NOT_FOUND_MSG);
         }
     }
 
@@ -128,7 +129,7 @@ public class LearningPlanService {
         if (learningPlan != null) {
             return learningPlan;
         } else {
-            throw new LearningPlanNotFoundException("Learning plan not found.");
+            throw new LearningPlanNotFoundException(NOT_FOUND_MSG);
         }
     }
 
@@ -143,7 +144,7 @@ public class LearningPlanService {
      */
     public LearningPlan updateLearningPlanName(Long id, String newName) {
         LearningPlan learningPlan = learningPlanRepository.findById(id)
-                .orElseThrow(() -> new LearningPlanNotFoundException("Learning plan not found."));
+                .orElseThrow(() -> new LearningPlanNotFoundException(NOT_FOUND_MSG));
         learningPlan.setLearningPlanName(newName);
         return learningPlanRepository.save(learningPlan);
     }
@@ -158,7 +159,7 @@ public class LearningPlanService {
      */
     public void deleteLearningPlan(Long id) {
         if (!learningPlanRepository.existsById(id)) {
-            throw new LearningPlanNotFoundException("Learning plan not found.");
+            throw new LearningPlanNotFoundException(NOT_FOUND_MSG);
         }
         learningPlanRepository.deleteById(id);
     }
