@@ -1,7 +1,6 @@
 package com.thbs.lms.service;
 
 import com.thbs.lms.exception.*;
-import com.thbs.lms.model.Course;
 import com.thbs.lms.model.Module;
 import com.thbs.lms.repository.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The {@code moduleService} class provides methods for managing
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class ModuleService {
 
-    private static final String NOT_FOUND_MSG = "Learning Plan Path not found for ID: ";
+    private static final String NOT_FOUND_MSG = "Module not found.";
     private ModuleRepository moduleRepository;
 
     /**
@@ -36,14 +34,13 @@ public class ModuleService {
     }
 
     /**
-     * Saves a new learning plan path to the database with validation.
+     * Saves a new module to the database with validation.
      *
-     * @param module The learning plan path to be saved.
-     * @return The saved learning plan path.
-     * @throws InvalidmoduleDataException If the learning plan path data
-     *                                    is invalid.
-     * @throws DuplicatemoduleException   If a learning plan path with the
-     *                                    same details already exists.
+     * @param module The module to be saved.
+     * @return The saved module.
+     * @throws InvalidDataException    If the module data is invalid.
+     * @throws DuplicateEntryException If a module with the same details already
+     *                                 exists.
      */
     public Module saveModule(Module module) {
         // Validates data and checks for duplicates before saving
@@ -51,61 +48,37 @@ public class ModuleService {
                 || module.getTrainer() == null || module.getTrainer().isEmpty()
                 || module.getCourse() == null) {
             // Throws exceptions if path data is invalid or duplicate
-            throw new InvalidModuleDataException(
-                    "Invalid or incomplete data provided for creating Learning Plan Path");
+            throw new InvalidDataException("Invalid or incomplete data provided for creating module");
         }
         Long learningPlanId = module.getLearningPlan().getLearningPlanId();
-        Course course = module.getCourse();
 
         Optional<Module> existingEntry = moduleRepository
-                .findByLearningPlanLearningPlanIdAndCourse(learningPlanId, course);
+                .findByLearningPlanLearningPlanIdAndCourseAndStartDateAndEndDate(learningPlanId,
+                        module.getCourse(), module.getStartDate(), module.getEndDate());
         if (existingEntry.isPresent()) {
-            throw new DuplicateModuleException(
-                    "A learning plan path with the same course, learning plan ID already exists.");
+            throw new DuplicateEntryException(
+                    "A module with the same start date and end date for this course, attached to the same learning plan already exists.");
         }
 
         return moduleRepository.save(module);
     }
 
-   /**
- * Saves a list of modules to the database with validation.
- *
- * @param modules The list of modules to be saved.
- * @return The list of saved modules.
- * @throws InvalidModuleDataException If any module in the list has invalid data.
- * @throws DuplicateModuleException If any module in the list already exists.
- */
-public List<Module> saveAllModules(List<Module> modules) {
-    // Validate input modules
-    for (Module module : modules) {
-        validateModuleData(module);
+    /**
+     * Saves a list of modules to the database with validation.
+     *
+     * @param modules The list of modules to be saved.
+     * @return The list of saved modules.
+     * @throws InvalidDataException    If any module in the list has invalid data.
+     * @throws DuplicateEntryException If any module in the list already exists.
+     */
+    public List<Module> saveAllModules(List<Module> modules) {
+        List<Module> savedModules = new ArrayList<>();
+        // Validate input modules
+        for (Module module : modules) {
+            savedModules.add(saveModule(module));
+        }
+        return savedModules;
     }
-
-    // Check for duplicate modules
-    List<Module> existingModules = moduleRepository.findAllByLearningPlanInAndCourseIn(
-            modules.stream().map(Module::getLearningPlan).collect(Collectors.toList()),
-            modules.stream().map(Module::getCourse).collect(Collectors.toList())
-    );
-    if (!existingModules.isEmpty()) {
-        throw new DuplicateModuleException("One or more modules already exist.");
-    }
-
-    // Save all modules
-    List<Module> savedModules = moduleRepository.saveAll(modules);
-    
-    return savedModules;
-}
-
-private void validateModuleData(Module module) {
-    if (module.getStartDate() == null || module.getEndDate() == null
-            || module.getTrainer() == null || module.getTrainer().isEmpty()
-            || module.getCourse() == null) {
-        throw new InvalidModuleDataException("Invalid or incomplete data provided for creating Module");
-    }
-}
-
-
-    
 
     /**
      * Retrieves all modules from the database.
@@ -127,67 +100,65 @@ private void validateModuleData(Module module) {
     }
 
     /**
-     * Retrieves modules by trainer from the database.
+     * Retrieves modules handled by a trainer from the database.
      *
-     * @param trainer The trainer associated with the modules.
+     * @param trainer The trainer associated with the module.
      * @return The list of modules with the specified trainer.
-     * @throws InvalidTrainerException If the trainer is invalid.
+     * @throws InvalidDataException If the trainer is invalid.
      */
     public List<Module> getAllModulesByTrainer(String trainer) {
         // Validates trainer and retrieves paths by trainer
         if (trainer == null || trainer.isEmpty()) {
             // Throws exceptions if trainer is invalid or null
-            throw new InvalidTrainerException("trainer cannot be null or empty.");
+            throw new InvalidDataException("Trainer cannot be null or empty.");
         }
         return moduleRepository.findByTrainer(trainer);
     }
 
     /**
-     * Updates the trainer of a learning plan path by its ID in the database.
+     * Updates the trainer of a module by its ID in the database.
      *
-     * @param moduleId   The ID of the learning plan path.
-     * @param newTrainer The new trainer for the learning plan path.
-     * @return The updated learning plan path.
-     * @throws InvalidTrainerException If the trainer is invalid or
-     *                                 incomplete.
-     * @throws moduleNotFoundException If the learning plan path with the
-     *                                 specified ID is not found.
+     * @param moduleId   The ID of the module.
+     * @param newTrainer The new trainer for the module.
+     * @return The updated module.
+     * @throws InvalidDataException If the trainer is invalid or incomplete.
+     * @throws NotFoundException    If the module with the specified ID is not
+     *                              found.
      */
     public Module updateModuleTrainer(Long moduleId, String newTrainer) {
         // Validates and updates the trainer of the path
         if (newTrainer == null || newTrainer.isEmpty()) {
             // Throws exceptions if trainer is invalid or null
-            throw new InvalidTrainerException("Invalid or Incomplete trainer value provided");
+            throw new InvalidDataException("Invalid or Incomplete trainer value provided");
         }
         Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new ModuleNotFoundException(
-                        NOT_FOUND_MSG + moduleId));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MSG));
         module.setTrainer(newTrainer);
         return moduleRepository.save(module);
     }
 
     /**
-     * Updates the dates of a learning plan path in the database.
+     * Updates the dates of a module in the database.
      *
-     * @param moduleId  The ID of the learning plan path.
-     * @param startDate The start date of the learning plan path.
-     * @param endDate   The end date of the learning plan path.
-     * @return The updated learning plan path.
-     * @throws InvalidmoduleDataException If the date format is invalid or
-     *                                    incomplete.
-     * @throws moduleNotFoundException    If the learning plan path with
-     *                                    the specified ID is not found.
+     * @param moduleId  The ID of the module.
+     * @param startDate The start date of the module.
+     * @param endDate   The end date of the module.
+     * @return The updated module.
+     * @throws InvalidDataException If the date format is invalid or
+     *                              incomplete.
+     * @throws NotFoundException    If the module with
+     *                              the specified ID is not found.
      */
     public Optional<Module> updateModuleDates(Long moduleId, Date startDate,
             Date endDate) {
         if (startDate == null || endDate == null) {
-            // Throws exceptions if learning plan path date format is invalid or null
-            throw new InvalidModuleDataException(
-                    "Invalid or incomplete date provided for updating Learning Plan Path");
+            // Throws exceptions if module date format is invalid or null
+            throw new InvalidDataException(
+                    "Invalid or incomplete date provided for updating module");
         }
 
         if (endDate.before(startDate)) {
-            throw new InvalidModuleDataException("End date must be after start date");
+            throw new InvalidDataException("End date must be after start date");
         }
 
         Optional<Module> optionalmodule = moduleRepository
@@ -198,8 +169,7 @@ private void validateModuleData(Module module) {
             module.setEndDate(endDate);
             return Optional.of(moduleRepository.save(module));
         } else {
-            throw new ModuleNotFoundException(
-                    NOT_FOUND_MSG + moduleId);
+            throw new NotFoundException(NOT_FOUND_MSG);
         }
     }
 
@@ -227,11 +197,11 @@ private void validateModuleData(Module module) {
     }
 
     /**
-     * Deletes a learning plan path by its ID from the database.
+     * Deletes a module by its ID from the database.
      *
-     * @param moduleId The ID of the learning plan path to delete.
-     * @throws moduleNotFoundException If the learning plan path with the
-     *                                 specified ID is not found.
+     * @param moduleId The ID of the module to delete.
+     * @throws NotFoundException If the module with the
+     *                           specified ID is not found.
      */
     public void deleteModule(Long moduleId) {
 
@@ -239,8 +209,7 @@ private void validateModuleData(Module module) {
         if (module.isPresent()) {
             moduleRepository.delete(module.get());
         } else {
-            throw new ModuleNotFoundException(
-                    NOT_FOUND_MSG + moduleId);
+            throw new NotFoundException(NOT_FOUND_MSG);
         }
     }
 }

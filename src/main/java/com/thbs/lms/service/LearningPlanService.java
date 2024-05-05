@@ -36,16 +36,23 @@ public class LearningPlanService {
      *
      * @param learningPlan The learning plan to be saved.
      * @return The saved learning plan.
-     * @throws DuplicateLearningPlanException If a learning plan already exists for
-     *                                        the given batch.
-     * @throws InvalidLearningPlanException   If the batch ID or learning plan type
-     *                                        is null.
+     * @throws DuplicateEntryException If a learning plan already exists for
+     *                                 the given batch.
+     * @throws InvalidDataException    If the batch ID or learning plan type
+     *                                 is null.
      */
     public LearningPlan saveLearningPlan(LearningPlan learningPlan) {
+        // Check if batch ID, type, and learning plan name are present
+        if (learningPlan.getBatchIds() == null || learningPlan.getType() == null || learningPlan.getType().isEmpty()
+                || learningPlan.getLearningPlanName() == null || learningPlan.getLearningPlanName().isEmpty()) {
+            throw new InvalidDataException(
+                    "Batch ID, Learning Plan Type, or Learning Plan Name cannot be null or empty");
+        }
+
         // Check if the batch ID is already attached to a learning plan
         LearningPlan existingLearningPlan = learningPlanRepository.findByBatchIdsContaining(learningPlan.getBatchIds());
         if (existingLearningPlan != null) {
-            throw new DuplicateLearningPlanException("Learning plan for this batch already exists");
+            throw new DuplicateEntryException("Learning plan for this batch already exists");
         }
 
         // Check if a learning plan with the same name and type exists
@@ -79,12 +86,12 @@ public class LearningPlanService {
      *
      * @param id The ID of the learning plan.
      * @return The learning plan with the specified ID.
-     * @throws LearningPlanNotFoundException If the learning plan with the specified
-     *                                       ID is not found.
+     * @throws NotFoundException If the learning plan with the specified
+     *                           ID is not found.
      */
     public LearningPlan getLearningPlanById(Long id) {
         return learningPlanRepository.findById(id)
-                .orElseThrow(() -> new LearningPlanNotFoundException(NOT_FOUND_MSG));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MSG));
     }
 
     /**
@@ -92,21 +99,21 @@ public class LearningPlanService {
      *
      * @param type The type of the learning plans.
      * @return The list of learning plans with the specified type.
-     * @throws InvalidTypeException          If the type is null.
-     * @throws LearningPlanNotFoundException If no learning plans are found with the
-     *                                       specified type.
+     * @throws InvalidDataException If the type is null.
+     * @throws NotFoundException    If no learning plans are found with the
+     *                              specified type.
      */
     public List<LearningPlan> getLearningPlansByType(String type) {
         // Validates type and retrieves learning plans by type
         if (type == null || type.isEmpty()) {
-            throw new InvalidTypeException("Learning Plan Type cannot be null");
+            throw new InvalidDataException("Learning Plan Type cannot be null");
         }
         List<LearningPlan> learningPlan = learningPlanRepository.findByType(type);
         if (!learningPlan.isEmpty()) {
             return learningPlan;
         } else {
             // Throws exception if type is invalid or no learning plans found
-            throw new LearningPlanNotFoundException(NOT_FOUND_MSG);
+            throw new NotFoundException(NOT_FOUND_MSG);
         }
     }
 
@@ -115,21 +122,21 @@ public class LearningPlanService {
      *
      * @param batchID The ID of the batch.
      * @return The learning plan associated with the specified batch ID.
-     * @throws InvalidBatchException         If the batch ID is null.
-     * @throws LearningPlanNotFoundException If no learning plans are found for the
-     *                                       specified batch ID.
+     * @throws InvalidDataException If the batch ID is null.
+     * @throws NotFoundException    If no learning plans are found for the
+     *                              specified batch ID.
      */
     public LearningPlan getLearningPlanByBatchId(Set<Long> batchId) {
         // Validates batch ID and retrieves learning plans by batch ID
         if (batchId == null) {
             // Throws exception if batch ID is invalid or no learning plans found
-            throw new InvalidBatchException("Batch ID cannot be null");
+            throw new InvalidDataException("Batch ID cannot be null");
         }
         LearningPlan learningPlan = learningPlanRepository.findByBatchIdsContaining(batchId);
         if (learningPlan != null) {
             return learningPlan;
         } else {
-            throw new LearningPlanNotFoundException(NOT_FOUND_MSG);
+            throw new NotFoundException(NOT_FOUND_MSG);
         }
     }
 
@@ -139,12 +146,12 @@ public class LearningPlanService {
      * @param id      The ID of the learning plan to update.
      * @param newName The new name for the learning plan.
      * @return The updated learning plan.
-     * @throws LearningPlanNotFoundException If the learning plan with the specified
-     *                                       ID is not found.
+     * @throws NotFoundException If the learning plan with the specified
+     *                           ID is not found.
      */
     public LearningPlan updateLearningPlanName(Long id, String newName) {
         LearningPlan learningPlan = learningPlanRepository.findById(id)
-                .orElseThrow(() -> new LearningPlanNotFoundException(NOT_FOUND_MSG));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MSG));
         learningPlan.setLearningPlanName(newName);
         return learningPlanRepository.save(learningPlan);
     }
@@ -154,12 +161,12 @@ public class LearningPlanService {
      * paths.
      *
      * @param id The ID of the learning plan to delete.
-     * @throws LearningPlanNotFoundException If the learning plan with the specified
-     *                                       ID is not found.
+     * @throws NotFoundException If the learning plan with the specified
+     *                           ID is not found.
      */
     public void deleteLearningPlan(Long id) {
         if (!learningPlanRepository.existsById(id)) {
-            throw new LearningPlanNotFoundException(NOT_FOUND_MSG);
+            throw new NotFoundException(NOT_FOUND_MSG);
         }
         learningPlanRepository.deleteById(id);
     }

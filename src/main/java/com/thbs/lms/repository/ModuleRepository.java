@@ -1,14 +1,12 @@
 package com.thbs.lms.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.thbs.lms.model.Course;
-import com.thbs.lms.model.LearningPlan;
 import com.thbs.lms.model.Module;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +26,6 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
      */
     List<Module> findByLearningPlanLearningPlanId(Long learningPlanId);
 
-   
     /**
      * Retrieves a list of modules by their trainer.
      *
@@ -38,17 +35,16 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
     List<Module> findByTrainer(String trainer);
 
     /**
-     * Retrieves a module by learning plan ID, course 
+     * Retrieves a module by learning plan ID, course, startDate, endDate
      *
      * @param learningPlanId The ID of the learning plan.
      * @param course         The course associated with the module.
+     * @param startDate      The startDate of the module.
+     * @param endDate        The endDate of the module.
      * 
      * @return An optional containing the module with the specified
-     *         learning plan ID, course  if found.
+     *         learning plan ID, course if found.
      */
-    Optional<Module> findByLearningPlanLearningPlanIdAndCourse(Long learningPlanId, Course course);
-
-    @Query("SELECT m FROM Module m WHERE m.learningPlan IN :learningPlans AND m.course IN :courses")
-    List<Module> findAllByLearningPlanInAndCourseIn(@Param("learningPlans") List<LearningPlan> learningPlans,
-                                                    @Param("courses") List<Course> courses);
+    Optional<Module> findByLearningPlanLearningPlanIdAndCourseAndStartDateAndEndDate(Long learningPlanId, Course course,
+            Date startDate, Date endDate);
 }

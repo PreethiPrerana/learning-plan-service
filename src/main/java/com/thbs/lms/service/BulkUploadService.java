@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.thbs.lms.exception.DuplicateTopicException;
+import com.thbs.lms.exception.DuplicateEntryException;
 import com.thbs.lms.exception.FileProcessingException;
 import com.thbs.lms.exception.InvalidSheetFormatException;
 import com.thbs.lms.model.Course;
@@ -74,7 +74,7 @@ public class BulkUploadService {
                 String courseName = sheet.getSheetName();
 
                 // Check if the course already exists in the database
-                Optional<Course> existingCourseOptional = courseRepository.findByCourseNameIgnoreCase(courseName);
+                Optional<Course> existingCourseOptional = courseRepository.findByCourseNameIgnoreCaseAndLevel(courseName,level);
                 Course course;
                 if (existingCourseOptional.isPresent()) {
                     course = existingCourseOptional.get();
@@ -102,7 +102,7 @@ public class BulkUploadService {
      * @param sheet  The Excel sheet containing topics.
      * @param course The course associated with the topics.
      * @return A list of topics extracted from the sheet.
-     * @throws DuplicateTopicException     If duplicate topics are found in the
+     * @throws DuplicateEntryException     If duplicate topics are found in the
      *                                     sheet.
      * @throws InvalidSheetFormatException If the format of the Excel sheet is
      *                                     invalid.
@@ -114,6 +114,8 @@ public class BulkUploadService {
 
         // Skip header row
         if (iterator.hasNext()) {
+            iterator.next();
+            iterator.next();
             iterator.next();
         }
         while (iterator.hasNext()) {
@@ -130,7 +132,7 @@ public class BulkUploadService {
                     continue; // Skip adding existing topics
                 }
                 if (topicNames.contains(topicName)) {
-                    throw new DuplicateTopicException("Duplicate entries present in sheet.");
+                    throw new DuplicateEntryException("Duplicate entries present in sheet.");
                 }
                 topicNames.add(topicName);
 
@@ -139,8 +141,8 @@ public class BulkUploadService {
                 topic.setDescription(description);
                 topic.setCourse(course);
                 topics.add(topic);
-            } catch (DuplicateTopicException e) {
-                throw e; // Re-throw DuplicateTopicException
+            } catch (DuplicateEntryException e) {
+                throw e; // Re-throw DuplicateEntryException
             } catch (Exception e) {
                 throw new InvalidSheetFormatException("Sheet may have extra cells or invalid data.");
             }

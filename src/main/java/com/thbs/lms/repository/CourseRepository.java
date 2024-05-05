@@ -24,18 +24,19 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByLevel(String level);
 
     /**
-     * Retrieves a course by its name, ignoring case sensitivity.
-     *
-     * @param courseName The name of the course to retrieve.
-     * @return An optional containing the course with the specified name, if found.
-     */
-    Optional<Course> findByCourseNameIgnoreCase(String courseName);
-
-    /**
      * Saves the specified course.
      *
      * @param course The course to save.
      * @return The saved course.
      */
     Object save(Optional<Course> course);
+
+    /**
+     * Retrieves a course by its name and level, ignoring case sensitivity.
+     *
+     * @param courseName The name of the course to retrieve.
+     * @param level      The level of the course to retrieve.
+     * @return An optional containing the course with the specified name, if found.
+     */
+    Optional<Course> findByCourseNameIgnoreCaseAndLevel(String courseName, String level);
 }

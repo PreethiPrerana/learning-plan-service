@@ -32,7 +32,7 @@ public class Topic {
             @Parameter(name = "initial_value", value = "1000"),
             @Parameter(name = "increment_size", value = "1")
     })
-    private Long topicID;
+    private Long topicId;
 
     /**
      * The name of the topic.
