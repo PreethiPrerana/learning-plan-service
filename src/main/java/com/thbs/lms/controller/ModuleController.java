@@ -2,10 +2,8 @@ package com.thbs.lms.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-// import com.thbs.lms.dto.ReminderDTO;
 import com.thbs.lms.model.Module;
 import com.thbs.lms.service.ModuleService;
-// import com.thbs.lms.service.ReminderService;
 import com.thbs.lms.utility.DateRange;
 
 import java.util.List;
@@ -21,7 +19,7 @@ import org.springframework.http.ResponseEntity;
  */
 @RestController
 @RequestMapping("/module")
-@CrossOrigin("172.18.4.113:5173, 172.18.4.195:5173")
+// @CrossOrigin("172.18.4.113:5173, 172.18.4.195:5173")
 public class ModuleController {
 
     /**
@@ -39,7 +37,7 @@ public class ModuleController {
     @Autowired
     public ModuleController(ModuleService moduleService) {
         this.moduleService = moduleService;
-       
+
     }
 
     /**
@@ -50,8 +48,8 @@ public class ModuleController {
      */
     @PostMapping
     public ResponseEntity<Module> createModule(@RequestBody Module module) {
-        Module createdPath = moduleService.saveModule(module);
-        return ResponseEntity.ok(createdPath);
+        Module createdModule = moduleService.saveModule(module);
+        return ResponseEntity.ok(createdModule);
     }
 
     /**
@@ -61,10 +59,9 @@ public class ModuleController {
      * @return a response entity containing a list of added modules
      */
     @PostMapping("/multiple")
-    public ResponseEntity<List<Module>> createModules(
-            @RequestBody List<Module> modules) {
-        List<Module> createdPaths = moduleService.saveAllModules(modules);
-        return ResponseEntity.ok().body(createdPaths);
+    public ResponseEntity<List<Module>> createModules(@RequestBody List<Module> modules) {
+        List<Module> createdModules = moduleService.saveAllModules(modules);
+        return ResponseEntity.ok().body(createdModules);
     }
 
     /**
@@ -74,26 +71,22 @@ public class ModuleController {
      */
     @GetMapping
     public ResponseEntity<List<Module>> getAllModules() {
-        List<Module> paths = moduleService.getAllModules();
-        return ResponseEntity.ok().body(paths);
+        List<Module> modules = moduleService.getAllModules();
+        return ResponseEntity.ok().body(modules);
     }
 
     /**
-     * Retrieves all modules associated with a particular learning plan
-     * ID.
+     * Retrieves all modules associated with a particular learning plan ID.
      *
      * @param learningPlanId the learning plan ID
-     * @return a response entity containing a list of modules for the
-     *         specified learning plan ID
+     * @return a response entity containing a list of modules for the specified
+     *         learning plan ID
      */
     @GetMapping("/learning-plan-id/{learningPlanId}")
-    public ResponseEntity<List<Module>> getAllModulesByLearningPlanId(
-            @PathVariable Long learningPlanId) {
-        List<Module> paths = moduleService.getAllModulesByLearningPlanId(learningPlanId);
-        return ResponseEntity.ok().body(paths);
+    public ResponseEntity<List<Module>> getAllModulesByLearningPlanId(@PathVariable Long learningPlanId) {
+        List<Module> modules = moduleService.getAllModulesByLearningPlanId(learningPlanId);
+        return ResponseEntity.ok().body(modules);
     }
-
-    
 
     /**
      * Retrieves all modules associated with a particular trainer.
@@ -104,15 +97,15 @@ public class ModuleController {
      */
     @GetMapping("/trainer/{trainerName}")
     public ResponseEntity<List<Module>> getAllModulesByTrainer(@PathVariable String trainerName) {
-        List<Module> paths = moduleService.getAllModulesByTrainer(trainerName);
-        return ResponseEntity.ok().body(paths);
+        List<Module> modules = moduleService.getAllModulesByTrainer(trainerName);
+        return ResponseEntity.ok().body(modules);
     }
 
     /**
      * Updates the trainer for a particular module.
      *
-     * @param moduleId the module ID
-     * @param newTrainer         the new trainer
+     * @param moduleId   the module ID
+     * @param newTrainer the new trainer
      * @return a response entity indicating the success of the update operation
      */
     @PatchMapping("/trainer/{moduleId}")
@@ -124,8 +117,8 @@ public class ModuleController {
     /**
      * Updates the start date and end date for a particular module.
      *
-     * @param moduleId the module ID
-     * @param dateRange          the date range containing the start and end dates
+     * @param moduleId  the module ID
+     * @param dateRange the date range containing the start and end dates
      * @return a response entity indicating the success of the update operation
      */
     @PatchMapping("/update-dates/{moduleId}")
@@ -145,7 +138,7 @@ public class ModuleController {
     @DeleteMapping("/{moduleId}")
     public ResponseEntity<String> deletemodule(@PathVariable Long moduleId) {
         moduleService.deleteModule(moduleId);
-        return ResponseEntity.ok().body("module deleted successfully");
+        return ResponseEntity.ok().body("Module deleted successfully");
     }
 
 }

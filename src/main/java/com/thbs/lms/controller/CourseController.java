@@ -18,7 +18,8 @@ import com.thbs.lms.service.CourseService;
  */
 @RestController
 @RequestMapping("/course")
-@CrossOrigin("172.18.4.186:5173, 172.18.4.113:5173, 172.18.4.30:5173, 172.18.4.195:5173")
+// @CrossOrigin("172.18.4.186:5173, 172.18.4.113:5173, 172.18.4.30:5173,
+// 172.18.4.195:5173")
 public class CourseController {
 
     /**
@@ -35,13 +36,13 @@ public class CourseController {
      * Constructs a new {@code CourseController} with the specified
      * {@code CourseService}.
      *
-     * @param courseService the course service
+     * @param courseService     the course service
+     * @param bulkUploadService the bulk upload service
      */
     @Autowired
     public CourseController(CourseService courseService, BulkUploadService bulkUploadService) {
         this.courseService = courseService;
         this.bulkUploadService = bulkUploadService;
-
     }
 
     /**
@@ -80,14 +81,15 @@ public class CourseController {
     }
 
     /**
-     * Retrieves all course DTOs.
+     * Retrieves a course by its ID.
      *
-     * @return a response entity containing a list of all course DTOs
+     * @param courseId the ID of the course to retrieve
+     * @return a response entity containing the course with the specified ID
      */
-    @GetMapping("/dto")
-    public ResponseEntity<List<CourseDTO>> getAllCourseDTOs() {
-        List<CourseDTO> courseDTOs = courseService.getAllCourseDTOs();
-        return ResponseEntity.ok().body(courseDTOs);
+    @GetMapping("/id/{courseId}")
+    public ResponseEntity<Course> getCourseById(@PathVariable Long courseId) {
+        Course course = courseService.getCourseById(courseId);
+        return ResponseEntity.ok().body(course);
     }
 
     /**
@@ -103,15 +105,14 @@ public class CourseController {
     }
 
     /**
-     * Retrieves a course by its ID.
+     * Retrieves all course DTOs.
      *
-     * @param courseId the ID of the course to retrieve
-     * @return a response entity containing the course with the specified ID
+     * @return a response entity containing a list of all course DTOs
      */
-    @GetMapping("/id/{courseId}")
-    public ResponseEntity<Course> getCourseById(@PathVariable Long courseId) {
-        Course course = courseService.getCourseById(courseId);
-        return ResponseEntity.ok().body(course);
+    @GetMapping("/dto")
+    public ResponseEntity<List<CourseDTO>> getAllCourseDTOs() {
+        List<CourseDTO> courseDTOs = courseService.getAllCourseDTOs();
+        return ResponseEntity.ok().body(courseDTOs);
     }
 
     /**
@@ -135,7 +136,7 @@ public class CourseController {
      */
     @DeleteMapping("/{courseId}")
     public ResponseEntity<String> deleteCourse(@PathVariable Long courseId) {
-        courseService.deleteCourse(courseId);
+        courseService.deleteCourseById(courseId);
         return ResponseEntity.ok().body("Course deleted successfully");
     }
 
@@ -147,7 +148,7 @@ public class CourseController {
      */
     @DeleteMapping("/multiple")
     public ResponseEntity<String> deleteCourses(@RequestBody List<Course> courses) {
-        courseService.deleteCourses(courses);
+        courseService.deleteMultipleCourses(courses);
         return ResponseEntity.ok().body("Courses deleted successfully");
     }
 }

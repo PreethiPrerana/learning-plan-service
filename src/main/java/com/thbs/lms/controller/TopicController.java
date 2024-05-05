@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/topic")
-@CrossOrigin("172.18.4.186:5173, 172.18.4.113:5173, 172.18.4.195:5173")
+// @CrossOrigin("172.18.4.186:5173, 172.18.4.113:5173, 172.18.4.195:5173")
 public class TopicController {
 
     /**
@@ -50,8 +50,7 @@ public class TopicController {
      */
     @PostMapping
     public ResponseEntity<Topic> addTopic(@RequestBody Topic topic) {
-        Topic addedTopic = topicService.addTopicWithValidation(topic.getTopicName(), topic.getDescription(),
-                topic.getCourse());
+        Topic addedTopic = topicService.addTopicWithValidation(topic);
         return ResponseEntity.ok().body(addedTopic);
     }
 
