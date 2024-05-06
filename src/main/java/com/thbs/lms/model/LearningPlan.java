@@ -22,12 +22,12 @@ public class LearningPlan {
     private String learningPlanName;
     private String type;
 
-    @ElementCollection
-    @CollectionTable(name = "LearningPlan_Batch", joinColumns = @JoinColumn(name = "learning_plan_id"))
-    @Column(name = "batch_id")
-    private Set<Long> batchIds = new HashSet<>();
+    // @ElementCollection
+    // @CollectionTable(name = "LearningPlan_Batch", joinColumns = @JoinColumn(name = "learning_plan_id"))
+    // @Column(name = "batch_id")
+    // private Set<Long> batchIds = new HashSet<>();
 
-    public void addBatchId(Set<Long> set) {
-        batchIds.addAll(set);
-    }
+    // public void addBatchId(Set<Long> set) {
+    //     batchIds.addAll(set);
+    // }
 }

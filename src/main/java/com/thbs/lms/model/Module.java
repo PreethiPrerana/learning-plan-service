@@ -58,4 +58,6 @@ public class Module {
      */
     @Temporal(TemporalType.DATE)
     private Date endDate;
+
+    private Long batchId;
 }
